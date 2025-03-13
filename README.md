@@ -1,7 +1,7 @@
 # Fruit wordle game for kids
 
 first step
-run 'npm install'
+/n run 'npm install'
 
 add firebase_config.json file in backend folder which includes like this
 {
