@@ -15,13 +15,28 @@ db = firestore.client()
 def get_random_word():
     words_ref = db.collection('words')
     docs = words_ref.stream()
-    word_list = [doc.to_dict()['word'] for doc in docs]
-    return random.choice(word_list).upper()
+    word_list = [doc.to_dict() for doc in docs]
+
+    if not word_list:
+        return None, None  # Return None for both word and URL if no data found
+
+    chosen_word = random.choice(word_list)
+    word = chosen_word.get('word', '').upper()
+    image_url = chosen_word.get('url', '')  # Fetch image URL
+
+    return word, image_url
+
 
 @app.route('/new-game', methods=['GET'])
 def new_game():
-    word = get_random_word()
-    return jsonify({"solution": word}), 200
+    word, image_url = get_random_word()
+    
+    if not word:
+        return jsonify({"error": "No words found in Firestore"}), 500
+
+    return jsonify({"solution": word, "image_url": image_url}), 200
+
+
 
 @app.route('/check-word', methods=['POST'])
 def check_word():
