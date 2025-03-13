@@ -7,7 +7,7 @@ import random
 app = Flask(__name__)
 CORS(app)
 
-# Initialize Firebase only once
+# Initialize Firebase (Ensure it's initialized only once)
 if not firebase_admin._apps:
     cred = credentials.Certificate("firebase_config.json")
     firebase_admin.initialize_app(cred)
@@ -28,7 +28,7 @@ def get_random_word():
 
     return word, image_url
 
-@app.route('/api/new-game', methods=['GET'])
+@app.route('/api/new-game', methods=['GET'])  # Use `/api` for Vercel compatibility
 def new_game():
     word, image_url = get_random_word()
     if not word:
@@ -53,8 +53,7 @@ def check_word():
         else:
             result.append('absent')
 
-    is_correct = user_word == solution_word
-    return jsonify({"result": result, "correct": is_correct}), 200
+    return jsonify({"result": result, "correct": user_word == solution_word}), 200
 
 # Required for Vercel Serverless Functions
 def handler(event, context):
